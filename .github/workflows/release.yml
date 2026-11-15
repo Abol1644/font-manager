@@ -33,7 +33,7 @@ jobs:
       - name: Build distributables
         run: npm run make
       - name: Upload platform artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: glyph-${{ matrix.os }}
           path: app/out/make/**/*
