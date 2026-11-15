@@ -17,8 +17,16 @@ const config: ForgeConfig = {
       authors: 'Aryan',
     }),
     new MakerZIP({}, ['darwin']),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerRpm({
+      options: {
+        bin: 'Glyph',
+      },
+    }),
+    new MakerDeb({
+      options: {
+        bin: 'Glyph',
+      },
+    }),
   ],
   plugins: [
     new VitePlugin({

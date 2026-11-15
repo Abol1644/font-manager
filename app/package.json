@@ -12,7 +12,8 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "release": "electron-forge release",
-    "lint": "oxlint && oxfmt --check src",
+    "lint": "oxlint",
+    "format:check": "oxfmt --check src",
     "lint:fix": "oxlint --fix && oxfmt --write src",
     "typecheck": "tsc --noEmit"
   },

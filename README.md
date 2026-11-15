@@ -77,6 +77,8 @@ npm run lint
 npm run package
 ```
 
+`npm run lint` runs Oxlint. The CI workflow runs Oxfmt's formatting check on Ubuntu, where line-ending behavior is consistent across checkouts; the Windows runner still runs lint and packaging checks without failing on platform-specific line endings.
+
 `npm run package` creates an unpacked application under `app/out/` for the current host. `npm run make` creates distributables for the current host using Electron Forge:
 
 - Windows: Squirrel installer (`Setup.exe`) plus its `.nupkg` package and `RELEASES` update manifest.
