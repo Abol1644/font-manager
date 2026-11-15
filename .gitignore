@@ -1,0 +1,33 @@
+.venv/
+__pycache__/
+*.py[cod]
+.spike-data/
+*.tmp
+
+# Python tooling and local data
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# Local development files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+*.tsbuildinfo
+
+# Electron / Vite dependencies and generated output
+app/node_modules/
+app/.vite/
+app/dist/
+app/out/
+app/coverage/
+app/.artifacts/
+app/test-results/
+app/playwright-report/
+

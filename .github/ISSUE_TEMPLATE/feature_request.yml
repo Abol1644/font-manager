@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest an improvement or capability.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What are you trying to accomplish?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Catalogue and discovery
+        - Font metadata and variants
+        - Specimen and rendering
+        - Search and performance
+        - Desktop experience
+        - Platform support
+        - Documentation
+        - Other
