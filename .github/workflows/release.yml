@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build distributables
+        run: npm run make
+      - name: Upload platform artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: glyph-${{ matrix.os }}
+          path: app/out/make/**/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+  publish:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all platform artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+      - name: Generate SHA-256 checksums
+        working-directory: release-assets
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readdir, readFile, writeFile } from 'node:fs/promises';
+          import path from 'node:path';
+
+          async function walk(dir) {
+            const entries = await readdir(dir, { withFileTypes: true });
+            const files = [];
+            for (const entry of entries) {
+              const fullPath = path.join(dir, entry.name);
+              if (entry.isDirectory()) files.push(...await walk(fullPath));
+              else if (entry.isFile() && entry.name !== 'SHA256SUMS') files.push(fullPath);
+            }
+            return files;
+          }
+
+          const files = (await walk('.')).sort();
+          if (files.length === 0) throw new Error('No release assets were downloaded.');
+          const lines = [];
+          for (const file of files) {
+            const digest = createHash('sha256').update(await readFile(file)).digest('hex');
+            lines.push(`${digest}  ${file.replaceAll(path.sep, '/')}`);
+          }
+          await writeFile('SHA256SUMS', `${lines.join('\n')}\n`);
+          NODE
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: release-assets/**

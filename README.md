@@ -77,7 +77,26 @@ npm run lint
 npm run package
 ```
 
-`npm run package` creates an unpacked application under `app/out/` for the current host. The project does not yet define or verify a production release process. `npm run make` and `npm run release` exist in package scripts but are not established as release-ready workflows.
+`npm run package` creates an unpacked application under `app/out/` for the current host. `npm run make` creates distributables for the current host using Electron Forge:
+
+- Windows: Squirrel installer (`Setup.exe`) plus its `.nupkg` package and `RELEASES` update manifest.
+- macOS: ZIP archive.
+- Linux: DEB and RPM packages.
+
+The Windows x64 installer was successfully generated locally for Glyph 1.0.0. The application has only been run and verified on Windows; macOS and Linux packages are build targets, not evidence of working font discovery or verified runtime support on those systems.
+
+### GitHub Releases
+
+The `.github/workflows/release.yml` workflow builds distributables on Windows, macOS, and Linux and publishes their files with a SHA-256 checksum manifest to a GitHub Release whenever a version tag matching `v*` is pushed. The tag should match the version in `app/package.json` (currently `v1.0.0`).
+
+After pushing the repository to GitHub, create and push a version tag to start the release:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The workflow requires GitHub Actions to be enabled and the repository's Actions token to have permission to create releases. It does not run for ordinary pushes to `main`. Review the generated draft-free GitHub Release and its assets after the workflow completes. Do not push a tag until the matching version and source commit are ready to distribute.
 
 ## Security model
 
